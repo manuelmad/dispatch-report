@@ -1,22 +1,23 @@
-// Evento para que al tocar el input file, se quite el archivo anterior
+// Event to delete previous file when pressing the input file
 document.querySelector("#file").addEventListener("mousedown", () => {
 	document.querySelector("#file").value = "";
 });
 
-let result;
+// Variable to save the info from excel
+let result = [];
 
-// Evento para importar el archivo excel
+// Event to import excel file
 document.querySelector("#file").addEventListener("change", function () {
-	// Obtener el array de archivos cargados
+	// Getting uploaded files
 	let filesArray = document.querySelector("#file").files;
 	console.log(filesArray);
-	// Obtener el archivo seleccionado
+	// Getting the only file
 	let file = document.querySelector("#file").files[0];
 
-	// Separar el nombre del archivo por punto (.) para obtener su tipo
+	// Spliting file's name by "." to get its extension
 	let type = file.name.split('.');
 
-	// Mostrar un alert en caso de que el archivo no sea un excel y detener la función
+	// Show an alert in case the file is not an excel file. Stop function
 	if (type[type.length - 1] !== 'xlsx' && type[type.length - 1] !== 'xls') {
 		alert ('Solo puede seleccionar un archivo de Excel (.xls, .xlsx) para importar');
 		return false;
@@ -29,13 +30,11 @@ document.querySelector("#file").addEventListener("change", function () {
 		const zzexcel = window.XLS.read(data, {
 			type: 'binary'
  		});
-
-		// const result = []; Lo saqué de la función para usarlo luego para crear una tabla
 		
-		// Limpio la variable result para que no se dupliquen sus elementos cada vez que cargamos un nuevo archivo
+		// Clear variable
 		result = [];
         
-		// Código para recorrer las hojas del excel e ir agregado sus contenidos en el array "result"
+		// Reading excel sheets and adding their content in "result" array
 		for (let i = 0; i < zzexcel.SheetNames.length; i++) {
 			const newData = window.XLS.utils.sheet_to_json(zzexcel.Sheets[zzexcel.SheetNames[i]]);
 			result.push(...newData);
@@ -43,3 +42,23 @@ document.querySelector("#file").addEventListener("change", function () {
 		console.log('result', result);
 	}
 });
+
+const guide_container = document.getElementById('guide_container');
+
+const guide_btn = document.getElementById('guide_btn');
+guide_btn.addEventListener('click', createGuide);
+
+function createGuide() {
+	guide_container.innerHTML = '';
+	let productInfo = [];
+	result.forEach(element => {
+		const p = document.createElement('p');
+		const span = document.createElement('span');
+		span.innerHTML = element['Cliente Nombre'];
+		p.appendChild(span);
+		guide_container.appendChild(p);
+	});
+
+	console.log(productInfo);
+	
+}
